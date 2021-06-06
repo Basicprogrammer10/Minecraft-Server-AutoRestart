@@ -10,6 +10,7 @@ import config
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
+version = 'Alpha 1.0'
 
 
 ######### FUNCTIONS #########
@@ -41,13 +42,17 @@ def runServer(cfg, webhook):
 
     # Read and print the servers Std Out
     while True:
-        line = process.stdout.readline()
-        text = line.decode("utf-8").replace('\n', '')
-        text = common.getLastOfArray(text.split('] '))
-        if not line: break
-        if text == '': continue
-        common.debugPrint('Server', text, 'magenta')     
-        parseServerOut(webhook, text) 
+        try:
+            line = process.stdout.readline()
+            text = line.decode("utf-8").replace('\n', '')
+            text = common.getLastOfArray(text.split('] '))
+            if not line: break
+            if text == '': continue
+            common.debugPrint('Server', text, 'magenta')     
+            parseServerOut(webhook, text)
+        except Exception as e:
+            common.debugPrint('Main', 'Uhhh... Houston, we have a problem.', 'red')
+            print(common.colored(e, 'red'))
 
     # Get ExitCode when server stops
     exit_code = process.wait()
@@ -71,6 +76,7 @@ def main():
     webhook = discord.webhook(cfg.get('webhookUri'), cfg.get('webhooks'))
 
     os.chdir(cfg.get('serverFolder', 'server'))
+    common.debugPrint('Main', f'Welcome to Minecraft Server AutoRestart! {version}', 'cyan')
     common.debugPrint('Main', 'Starting...', 'green')
     runServer(cfg, webhook)
 
