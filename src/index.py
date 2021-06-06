@@ -68,6 +68,13 @@ def main():
     # Nice Welcome Message
     common.debugPrint('Main', f'Welcome to Minecraft Server AutoRestart! {version}', 'cyan')
 
+    # Plugin Loading
+    for i in common.getAllPlugins('src/plugins'):
+        print(common.loadPlugin(f'plugins.{i}'))
+    #from plugins.examplePlugin import plugin
+    #print(plugin().name)
+    exit()
+
     # Load Config
     cfg = config.config(configFile)
     cfg.read()
@@ -83,5 +90,7 @@ def main():
     runServer(cfg, webhook)
 
 if __name__ == "__main__":
+    main()
+    exit()
     try: main()
     except: common.debugPrint('Main', 'Exiting...', 'red')
