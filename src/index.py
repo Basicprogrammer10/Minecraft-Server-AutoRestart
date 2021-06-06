@@ -7,8 +7,11 @@ import discord
 ########### CONFIG ###########
 toRun = ["java", "-Xmx1G", "-jar", "server.jar", "--nogui"]
 
-
+# Discord Webhook Uri
 webhookUri = ''
+
+# If sending webhooks should be enabled
+webhooks   = webhookUri != ''
 
 
 ######### FUNCTIONS #########
@@ -62,7 +65,7 @@ def runServer(webhook):
 ####### MAIN FUNCTION #######
 def main():
     # Create a new webhook client thing...
-    webhook = discord.webhook(webhookUri)
+    webhook = discord.webhook(webhookUri, webhooks)
 
     os.chdir('server')
     common.debugPrint('Main', 'Starting...', 'green')
