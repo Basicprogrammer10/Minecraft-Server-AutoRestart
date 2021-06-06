@@ -1,6 +1,8 @@
+# Import Modules
 from subprocess import Popen, PIPE, STDOUT, run
 import os
 
+# Import Custom Modules
 import common
 import discord
 
@@ -38,7 +40,8 @@ def parseServerOut(webhook, text):
         webhook.send(f':x: **{user}** left the game')
 
 def runServer(webhook):
-    process = Popen(toRun, stdout = PIPE, stderr = STDOUT) # Open a pipe to the minecraft server
+    # Open a pipe to the minecraft server
+    process = Popen(toRun, stdout = PIPE, stderr = STDOUT)
 
     # Read and print the servers Std Out
     while True:
@@ -72,7 +75,5 @@ def main():
     runServer(webhook)
 
 if __name__ == "__main__":
-    main()
-    exit()
     try: main()
     except: common.debugPrint('Main', 'Exiting...', 'red')
