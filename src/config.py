@@ -11,7 +11,7 @@ class config:
         data = open(self.configFile, 'r').read().split('\n')
         final = {}
         for i in data:
-            working = i.split('=')
+            working = i.split('=', 1)
             try:
                 working[0] = working[0].replace(' ', '')
 
