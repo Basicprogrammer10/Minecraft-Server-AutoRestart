@@ -1,6 +1,7 @@
 # Import Modules
 from subprocess import Popen, PIPE, STDOUT, run
 import os
+import re
 
 # Import Custom Modules
 import common
@@ -19,11 +20,11 @@ webhooks   = webhookUri != ''
 ######### FUNCTIONS #########
 def parseServerOut(webhook, text):
     # On server Start
-    if common.startsWith(text, '[Server thread/INFO]: Done'):
+    if re.match(r'\[.*\]: Done', text):
         webhook.send(':star2: Server Started!')
 
     # On user chat message
-    if common.startsWith(text, '[Server thread/INFO]: <'):
+    if re.match(r'\[.*\]: <.*> .*', text):
         sender = text.split('<')[1].split('>')[0]
         message = text.split('> ')[1]
         message = common.makeRealNewLine(message)

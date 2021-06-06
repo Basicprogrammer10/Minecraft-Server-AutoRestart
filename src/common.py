@@ -21,6 +21,7 @@ def startsWith(str, check):
     return False
 
 def makeRealNewLine(text):
+    """Convert \n's to newlines"""
     return text.replace('\\n', '\n')
 
 __all__ = ['getLastOfArray', 'colored', 'debugPrint', 'startsWith']
