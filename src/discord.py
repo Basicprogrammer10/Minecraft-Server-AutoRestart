@@ -9,16 +9,20 @@ class embed():
 
 
 class webhook():
-    def __init__(self, hookUri):
+    def __init__(self, hookUri, doSend = True):
         self.hookUri = hookUri
+        #self.doSend = doSend
 
     def sendText(self, text):
         """Send Text"""
-        r = requests.post(self.hookUri, data = { "content": str(text) })
+        #if not self.doSend: return
+        r = requests.post(self.hookUri, json = { "content": str(text) })
         return (r.status_code, r.text)
 
     def send(self, data):
         """Send text or an embed"""
+        #if not self.doSend: return
+
         # If Data just a string
         if isinstance(data, str):
             return self.sendText(data)

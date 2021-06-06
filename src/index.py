@@ -6,10 +6,34 @@ import discord
 
 ########### CONFIG ###########
 toRun = ["java", "-Xmx1G", "-jar", "server.jar", "--nogui"]
+
+
 webhookUri = ''
 
 
 ######### FUNCTIONS #########
+def parseServerOut(webhook, text):
+    # On server Start
+    if common.startsWith(text, '[Server thread/INFO]: Done'):
+        webhook.send(':star2: Server Started!')
+
+    # On user chat message
+    if common.startsWith(text, '[Server thread/INFO]: <'):
+        sender = text.split('<')[1].split('>')[0]
+        message = text.split('> ')[1]
+        message = common.makeRealNewLine(message)
+        webhook.send(f'{sender} » {message}')
+
+    # On user Join
+    if 'joined the game' in text:
+        user = text.split(': ')[1].split(' joined the game')[0]
+        webhook.send(f':white_check_mark: **{user}** joined the game')
+
+    # On user leave
+    if 'left the game' in text:
+        user = text.split(': ')[1].split(' left the game')[0]
+        webhook.send(f':x: **{user}** left the game')
+
 def runServer(webhook):
     process = Popen(toRun, stdout = PIPE, stderr = STDOUT) # Open a pipe to the minecraft server
 
@@ -20,8 +44,8 @@ def runServer(webhook):
         text = common.getLastOfArray(text.split('] '))
         if not line: break
         if text == '': continue
-        common.debugPrint('Server', text, 'magenta')      
-        print(webhook.sendText(text))
+        common.debugPrint('Server', text, 'magenta')     
+        parseServerOut(webhook, text) 
 
     # Get ExitCode when server stops
     exit_code = process.wait()
@@ -30,11 +54,14 @@ def runServer(webhook):
     # If exit code is Non 0 then start the server again
     if exit_code != 0:
         common.debugPrint('Main', 'Trying to Restart Server', 'blue')
-        runServer()
+        webhook.send(':fire: Server Crash :/ - Attempting Restart')
+        runServer(webhook)
+    if exit_code == 0:
+        webhook.send(':stop_button: Server Stoped...')
 
 ####### MAIN FUNCTION #######
 def main():
-    # Create a new webhook client
+    # Create a new webhook client thing...
     webhook = discord.webhook(webhookUri)
 
     os.chdir('server')
@@ -42,5 +69,7 @@ def main():
     runServer(webhook)
 
 if __name__ == "__main__":
+    main()
+    exit()
     try: main()
     except: common.debugPrint('Main', 'Exiting...', 'red')
