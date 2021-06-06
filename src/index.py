@@ -20,7 +20,7 @@ webhooks   = webhookUri != ''
 ######### FUNCTIONS #########
 def parseServerOut(webhook, text):
     # On server Start
-    if re.match(r'\[.*\]: Done', text):
+    if re.match(r'\[.*\]: Done \(.*\)!', text):
         webhook.send(':star2: Server Started!')
 
     # On user chat message

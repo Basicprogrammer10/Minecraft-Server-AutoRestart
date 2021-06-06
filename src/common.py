@@ -20,8 +20,4 @@ def startsWith(str, check):
     if check in str: return str.index(check) == 0
     return False
 
-def makeRealNewLine(text):
-    """Convert \n's to newlines"""
-    return text.replace('\\n', '\n')
-
-__all__ = ['getLastOfArray', 'colored', 'debugPrint', 'startsWith']
+__all__ = ['getLastOfArray', 'colored', 'debugPrint']
