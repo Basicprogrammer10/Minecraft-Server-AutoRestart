@@ -14,10 +14,9 @@ def colored(text, color):
 def debugPrint(Category, Text, Color):
     """Format a print with the current time, a category and colored text"""
     print(f"{colored('['+datetime.now().strftime('%H:%M:%S')+']', 'yellow')} {colored('['+Category+']', 'magenta')} {colored(Text, Color)}")
-
-def startsWith(str, check):
-    """Checks if string starts with another string"""
-    if check in str: return str.index(check) == 0
-    return False
+    
+def makeRealNewLine(text):
+    """Convert \n's to newlines"""
+    return text.replace('\\n', '\n')
 
 __all__ = ['getLastOfArray', 'colored', 'debugPrint']

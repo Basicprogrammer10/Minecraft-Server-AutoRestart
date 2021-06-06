@@ -6,15 +6,10 @@ import re
 # Import Custom Modules
 import common
 import discord
+import config
 
 ########### CONFIG ###########
-toRun = ["java", "-Xmx1G", "-jar", "server.jar", "--nogui"]
-
-# Discord Webhook Uri
-webhookUri = ''
-
-# If sending webhooks should be enabled
-webhooks   = webhookUri != ''
+configFile = 'config/config.confnose'
 
 
 ######### FUNCTIONS #########
@@ -40,9 +35,9 @@ def parseServerOut(webhook, text):
         user = text.split(': ')[1].split(' left the game')[0]
         webhook.send(f':x: **{user}** left the game')
 
-def runServer(webhook):
+def runServer(cfg, webhook):
     # Open a pipe to the minecraft server
-    process = Popen(toRun, stdout = PIPE, stderr = STDOUT)
+    process = Popen(cfg.get('toRun'), stdout = PIPE, stderr = STDOUT)
 
     # Read and print the servers Std Out
     while True:
@@ -62,19 +57,25 @@ def runServer(webhook):
     if exit_code != 0:
         common.debugPrint('Main', 'Trying to Restart Server', 'blue')
         webhook.send(':fire: Server Crash :/ - Attempting Restart')
-        runServer(webhook)
+        runServer(cfg, webhook)
     if exit_code == 0:
         webhook.send(':stop_button: Server Stoped...')
 
 ####### MAIN FUNCTION #######
 def main():
-    # Create a new webhook client thing...
-    webhook = discord.webhook(webhookUri, webhooks)
+    # Load Config
+    cfg = config.config(configFile)
+    cfg.read()
 
-    os.chdir('server')
+    # Create a new webhook client thing...
+    webhook = discord.webhook(cfg.get('webhookUri'), cfg.get('webhooks'))
+
+    os.chdir(cfg.get('serverFolder', 'server'))
     common.debugPrint('Main', 'Starting...', 'green')
-    runServer(webhook)
+    runServer(cfg, webhook)
 
 if __name__ == "__main__":
+    main()
+    exit()
     try: main()
     except: common.debugPrint('Main', 'Exiting...', 'red')
