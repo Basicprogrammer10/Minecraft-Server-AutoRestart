@@ -7,6 +7,7 @@ import re
 import common
 import discord
 import config
+import events
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
@@ -15,38 +16,22 @@ version = 'Alpha 1.3'
 
 ######### FUNCTIONS #########
 def parseServerOut(webhook, text):
+    thisEvent = events.event(webhook, text)
+
     # On server Start
-    if re.match(r'\[.*\]: Done \(.*\)!', text):
-        webhook.send(':star2: Server Started!')
-        return
+    if re.match(r'\[.*\]: Done \(.*\)!', text): thisEvent.serverStart()
 
     # On user chat message
-    if re.match(r'\[.*\]: <.*> .*', text):
-        sender = text.split('<')[1].split('>')[0]
-        message = text.split('> ')[1]
-        message = common.makeRealNewLine(message)
-        webhook.send(f':speech_left: **{sender}** » {message}')
-        return
+    if re.match(r'\[.*\]: <.*> .*', text): thisEvent.chatMessage()
 
     # On user Advancement / Challenge complete
-    if re.match(r'.* has (made|completed) the (advancement|challenge) \[.*\]', text):
-        user = text.split(': ')[1].split(' ')[0]
-        adv = common.getLastOfArray(text.split('[')).split(']')[0]
-        thing = 'advancement' if 'advancement' in text else 'challenge'
-        webhook.send(f':dvd: **{user}** has completed the {thing} **{adv}**')
-        return
+    if re.match(r'.* has (made|completed) the (advancement|challenge) \[.*\]', text): thisEvent.advancement()
 
     # On user Join
-    if 'joined the game' in text:
-        user = text.split(': ')[1].split(' joined the game')[0]
-        webhook.send(f':white_check_mark: **{user}** joined the game')
-        return
+    if 'joined the game' in text: thisEvent.joinGame()
 
     # On user leave
-    if 'left the game' in text:
-        user = text.split(': ')[1].split(' left the game')[0]
-        webhook.send(f':x: **{user}** left the game')
-        return
+    if 'left the game' in text: thisEvent.leaveGame()
 
 def runServer(cfg, webhook):
     # Open a pipe to the minecraft server
@@ -73,10 +58,10 @@ def runServer(cfg, webhook):
     # If exit code is Non 0 then start the server again
     if exit_code != 0:
         common.debugPrint('Main', 'Trying to Restart Server', 'blue')
-        webhook.send(':fire: Server Crash :/ - Attempting Restart')
+        events.event(webhook).serverCrash()
         runServer(cfg, webhook)
     if exit_code == 0:
-        webhook.send(':stop_button: Server Stoped...')
+        events.event(webhook).serverStop()
 
 ####### MAIN FUNCTION #######
 def main():
