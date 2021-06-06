@@ -11,7 +11,7 @@ import events
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
-version = 'Alpha 1.3'
+version = 'Alpha 1.31'
 
 
 ######### FUNCTIONS #########
@@ -83,7 +83,5 @@ def main():
     runServer(cfg, webhook)
 
 if __name__ == "__main__":
-    main()
-    exit()
     try: main()
     except: common.debugPrint('Main', 'Exiting...', 'red')
