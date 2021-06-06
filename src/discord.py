@@ -1,4 +1,5 @@
 import requests
+import json
 
 class embed():
     def __init__(self, title, desc, color, footer = ''):
@@ -12,11 +13,20 @@ class webhook():
     def __init__(self, hookUri, doSend = True):
         self.hookUri = hookUri
         self.doSend = doSend
+        self.data = json.loads(requests.get(hookUri).text)
+        self.hookName = None
+
+    def name(self, setName = None):
+        if setName == None:
+            return self.data['name']
+        self.hookName = setName
 
     def sendText(self, text):
         """Send Text"""
         if not self.doSend: return
-        r = requests.post(self.hookUri, json = { "content": str(text) })
+        data = {"content": str(text)}
+        if self.hookName != None: data['username'] = self.hookName
+        r = requests.post(self.hookUri, json = data)
         return (r.status_code, r.text)
 
     def send(self, data):
@@ -29,5 +39,7 @@ class webhook():
 
         # If data is an instance of embed
         if isinstance(data, embed):
-            r = requests.post(self.hookUri, json = {"embeds": [{"title": data.title,"description": data.desc,"color": data.color,"footer": {"text": data.footer}}]})
+            data = {"embeds": [{"title": data.title,"description": data.desc,"color": data.color,"footer": {"text": data.footer}}]}
+            if self.hookName != None: data['username'] = self.hookName
+            r = requests.post(self.hookUri, json = data)
             return (r.status_code, r.text)
