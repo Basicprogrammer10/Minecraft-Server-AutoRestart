@@ -11,7 +11,7 @@ import events
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
-version = 'Alpha 2.0'
+version = 'Alpha 2.1'
 
 
 ######### FUNCTIONS #########
@@ -49,7 +49,6 @@ def runServer(cfg, webhook, pluginEvents):
             text = common.getLastOfArray(text.split('] '))
             if not line: break
             if text == '': continue
-            print('    ', end = '') # idk
             common.debugPrint('Server', f'{text}', 'magenta')
             toWrite = parseServerOut(webhook, text, pluginEvents)
             if toWrite != None: process.communicate(input = toWrite.encode())

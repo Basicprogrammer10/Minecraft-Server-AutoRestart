@@ -1,3 +1,10 @@
 Send Webhooks on...
 
 - Player Death
+
+
+Other Features:
+    - Allow multaple plugin with same regex
+    - Full on bot
+    - Clean up events (make it like the standerd plugin)
+    - Add to this list
