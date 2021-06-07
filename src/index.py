@@ -11,7 +11,7 @@ import events
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
-version = 'Alpha 1.32'
+version = 'Alpha 2.0'
 
 
 ######### FUNCTIONS #########
