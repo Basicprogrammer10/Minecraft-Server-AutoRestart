@@ -15,8 +15,12 @@ version = 'Alpha 1.32'
 
 
 ######### FUNCTIONS #########
-def parseServerOut(webhook, text):
+def parseServerOut(webhook, text, pluginEvents):
     thisEvent = events.event(webhook, text)
+
+    # Check for plugin Events
+    for i in pluginEvents:
+        if re.match(i, text): return pluginEvents[i](webhook, text)
 
     # On server Start
     if re.match(r'\[.*\]: Done \(.*\)!', text): thisEvent.serverStart()
@@ -33,9 +37,9 @@ def parseServerOut(webhook, text):
     # On user leave
     if 'left the game' in text: thisEvent.leaveGame()
 
-def runServer(cfg, webhook):
+def runServer(cfg, webhook, pluginEvents):
     # Open a pipe to the minecraft server
-    process = Popen(cfg.get('toRun'), stdout = PIPE, stderr = STDOUT)
+    process = Popen(cfg.get('toRun'), stdout = PIPE, stdin = PIPE if cfg.get('autoStdIn') else None, stderr = STDOUT)
 
     # Read and print the servers Std Out
     while True:
@@ -45,8 +49,10 @@ def runServer(cfg, webhook):
             text = common.getLastOfArray(text.split('] '))
             if not line: break
             if text == '': continue
-            common.debugPrint('Server', text, 'magenta')     
-            parseServerOut(webhook, text)
+            print('    ', end = '') # idk
+            common.debugPrint('Server', f'{text}', 'magenta')
+            toWrite = parseServerOut(webhook, text, pluginEvents)
+            if toWrite != None: process.communicate(input = toWrite.encode())
         except Exception as e:
             common.debugPrint('Main', 'Uhhh... Houston, we have a problem.', 'red')
             print(common.colored(e, 'red'))
@@ -69,11 +75,13 @@ def main():
     common.debugPrint('Main', f'Welcome to Minecraft Server AutoRestart! {version}', 'cyan')
 
     # Plugin Loading
+    pluginEvents = {}
     for i in common.getAllPlugins('src/plugins'):
-        print(common.loadPlugin(f'plugins.{i}'))
-    #from plugins.examplePlugin import plugin
-    #print(plugin().name)
-    exit()
+        plugin = common.loadPlugin(f'plugins.{i}')
+        if plugin == None: continue
+        common.debugPrint('PluginLoader', f'Loading {plugin["name"]} - {plugin["version"]}', 'blue')
+        for j in plugin['events']:
+            pluginEvents[j] = plugin['events'][j]
 
     # Load Config
     cfg = config.config(configFile)
@@ -87,10 +95,8 @@ def main():
 
     os.chdir(cfg.get('serverFolder', 'server'))
     common.debugPrint('Main', 'Starting...', 'green')
-    runServer(cfg, webhook)
+    runServer(cfg, webhook, pluginEvents)
 
 if __name__ == "__main__":
-    main()
-    exit()
     try: main()
     except: common.debugPrint('Main', 'Exiting...', 'red')

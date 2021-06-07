@@ -13,10 +13,11 @@ class webhook():
     def __init__(self, hookUri, doSend = True):
         self.hookUri = hookUri
         self.doSend = doSend
-        self.data = json.loads(requests.get(hookUri).text)
+        self.data = json.loads(requests.get(hookUri).text) if doSend else None
         self.hookName = None
 
     def name(self, setName = None):
+        if not self.doSend: return
         if setName == None:
             return self.data['name']
         self.hookName = setName

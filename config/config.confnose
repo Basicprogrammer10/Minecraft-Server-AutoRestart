@@ -9,3 +9,6 @@ webhookUri = ""
 
 # If sending webhooks should be enabled (True / False)
 webhooks = False
+
+# Auto STD In -  Pipe STD In  (Allow plugins to run commands on the server, but disables normal STD IN)]
+autoStdIn = False
