@@ -11,7 +11,7 @@ import events
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
-version = 'Alpha 2.1'
+version = 'Alpha 2.2'
 
 
 ######### FUNCTIONS #########
@@ -20,7 +20,7 @@ def parseServerOut(webhook, text, pluginEvents):
 
     # Check for plugin Events
     for i in pluginEvents:
-        if re.match(i, text): return pluginEvents[i](webhook, text)
+        if re.match(pluginEvents[i], text): return i(webhook, text)
 
     # On server Start
     if re.match(r'\[.*\]: Done \(.*\)!', text): thisEvent.serverStart()
