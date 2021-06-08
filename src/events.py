@@ -5,7 +5,7 @@ class event():
         self.webhook = webhook
         self.rawData = rawData
 
-    def serverStart(self):
+    def serverStart(self) -> '\[.*\]: Done \(.*\)!':
         self.webhook.send(':star2: Server Started!')
     
     def serverStop(self):
@@ -14,13 +14,13 @@ class event():
     def serverCrash(self):
         self.webhook.send(':fire: Server Crash :/ - Attempting Restart')
 
-    def chatMessage(self):
+    def chatMessage(self) -> '\[.*\]: <.*> .*':
         sender = self.rawData.split('<')[1].split('>')[0]
         message = self.rawData.split('> ')[1]
         message = common.makeRealNewLine(message)
         self.webhook.send(f':speech_left: **{sender}** » {message}')
 
-    def advancement(self):
+    def advancement(self) -> '.* has (made|completed) the (advancement|challenge) \[.*\]':
         user = self.rawData.split(': ')[1].split(' ')[0]
         adv = common.getLastOfArray(self.rawData.split('[')).split(']')[0]
         thing = 'advancement' if 'advancement' in self.rawData else 'challenge'
