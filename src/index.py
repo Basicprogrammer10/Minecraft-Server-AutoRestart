@@ -64,7 +64,7 @@ def runServer(cfg, webhook, pluginEvents):
     if exit_code != 0:
         common.debugPrint('Main', 'Trying to Restart Server', 'blue')
         events.event(webhook).serverCrash()
-        runServer(cfg, webhook)
+        runServer(cfg, webhook, pluginEvents)
     if exit_code == 0:
         events.event(webhook).serverStop()
 
@@ -89,7 +89,7 @@ def main():
     # Create a new webhook client thing...
     webhook = discord.webhook(cfg.get('webhookUri'), cfg.get('webhooks'))
 
-    # Set webhook name to be current webhook name + version of this program
+    # Set webhook name to be current webhook name - version of this program
     webhook.name(f'{webhook.name()} - {version}')
 
     os.chdir(cfg.get('serverFolder', 'server'))
