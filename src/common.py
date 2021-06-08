@@ -36,7 +36,7 @@ def loadPlugin(module):
     plugin = importedClass()
     if plugin.doRun == False: return None
     for i in [i for i in dir(plugin) if '__' not in i and callable(getattr(plugin, i))]:
-        final[getattr(plugin, i).__annotations__['return']] = getattr(plugin, i)
+        final[getattr(plugin, i)] = getattr(plugin, i).__annotations__['return']
     return {'name': plugin.name, 'version': plugin.version, 'events': final}
 
 __all__ = ['getLastOfArray', 'colored', 'debugPrint', 'makeRealNewLine']
