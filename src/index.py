@@ -92,7 +92,9 @@ def main():
     # Set webhook name to be current webhook name - version of this program
     webhook.name(f'{webhook.name()} - {version}')
 
+    # Change Working dir to Server dir
     os.chdir(cfg.get('serverFolder', 'server'))
+
     common.debugPrint('Main', 'Starting...', 'green')
     runServer(cfg, webhook, pluginEvents)
 
