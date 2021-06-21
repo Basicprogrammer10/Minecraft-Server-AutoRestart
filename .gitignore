@@ -1,3 +1,6 @@
 server
 src/__pycache__
 *.pyc
+.vscode
+
+src/plugins/*
