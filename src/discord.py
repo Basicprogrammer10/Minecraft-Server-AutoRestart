@@ -1,6 +1,8 @@
 import requests
 import json
 
+import common
+
 class embed():
     def __init__(self, title, desc, color, footer = ''):
         self.title = title
@@ -13,12 +15,17 @@ class webhook():
     def __init__(self, hookUri, doSend = True):
         self.hookUri = hookUri
         self.doSend = doSend
-        self.data = json.loads(requests.get(hookUri).text) if doSend else None
+        try:
+            self.data = json.loads(requests.get(hookUri).text) if doSend else None
+        except Exception as e:
+            common.debugPrint('Webhook', 'Error Connecting to Webhook...', 'red')
+            print(common.colored(e, 'red'))
         self.hookName = None
 
     def name(self, setName = None):
         if not self.doSend: return
         if setName == None:
+            if 'data' not in locals(): return ''
             return self.data['name']
         self.hookName = setName
 

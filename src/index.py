@@ -11,35 +11,26 @@ import events
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
-version = 'Alpha 2.2'
+version = 'Alpha 2.3'
 
 
 ######### FUNCTIONS #########
 def parseServerOut(webhook, text, pluginEvents):
-    thisEvent = events.event(webhook, text)
+    #thisEvent = events.event(webhook, text)
 
     # Check for plugin Events
     for i in pluginEvents:
         if re.match(pluginEvents[i], text): return i(webhook, text)
 
-    # On server Start
-    if re.match(r'\[.*\]: Done \(.*\)!', text): thisEvent.serverStart()
-
-    # On user chat message
-    if re.match(r'\[.*\]: <.*> .*', text): thisEvent.chatMessage()
-
-    # On user Advancement / Challenge complete
-    if re.match(r'.* has (made|completed) the (advancement|challenge) \[.*\]', text): thisEvent.advancement()
-
-    # On user Join
-    if 'joined the game' in text: thisEvent.joinGame()
-
-    # On user leave
-    if 'left the game' in text: thisEvent.leaveGame()
-
 def runServer(cfg, webhook, pluginEvents):
     # Open a pipe to the minecraft server
-    process = Popen(cfg.get('toRun'), stdout = PIPE, stdin = PIPE if cfg.get('autoStdIn') else None, stderr = STDOUT)
+    process = Popen(
+            cfg.get('toRun'), 
+            stdout = PIPE,
+            stdin = PIPE if cfg.get('autoStdIn') else None,
+            stderr = STDOUT,
+            shell = cfg.get('openShell', False)
+        )
 
     # Read and print the servers Std Out
     while True:
@@ -75,8 +66,10 @@ def main():
 
     # Plugin Loading
     pluginEvents = {}
-    for i in common.getAllPlugins('src/plugins'):
-        plugin = common.loadPlugin(f'plugins.{i}')
+    plugins = common.getAllPlugins('src/plugins')
+    plugins.append('events')
+    for i in plugins:
+        plugin = common.loadPlugin(f'{"plugins." if "events" not in i else ""}{i}')
         if plugin == None: continue
         common.debugPrint('PluginLoader', f'Loading {plugin["name"]} - {plugin["version"]}', 'blue')
         for j in plugin['events']:
@@ -92,7 +85,9 @@ def main():
     # Set webhook name to be current webhook name - version of this program
     webhook.name(f'{webhook.name()} - {version}')
 
+    # Change Working dir to Server dir
     os.chdir(cfg.get('serverFolder', 'server'))
+
     common.debugPrint('Main', 'Starting...', 'green')
     runServer(cfg, webhook, pluginEvents)
 
