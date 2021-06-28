@@ -2,5 +2,6 @@ server
 src/__pycache__
 *.pyc
 .vscode
+.tmp
 
 src/plugins/*

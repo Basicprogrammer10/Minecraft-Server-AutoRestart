@@ -6,7 +6,7 @@ class event():
         self.webhook = webhook
     
     def serverStop(self):
-        self.webhook.send(':stop_button: Server Stoped...')
+        self.webhook.send(':stop_button: Server Stopped...')
 
     def serverCrash(self):
         self.webhook.send(':fire: Server Crash :/ - Attempting Restart')
