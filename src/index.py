@@ -17,8 +17,11 @@ version = 'Alpha 2.3'
 ######### FUNCTIONS #########
 def parseServerOut(webhook, text, pluginEvents):
     # Check for plugin Events
+    run = []
     for i in pluginEvents:
-        if re.match(pluginEvents[i], text): return i(webhook, text)
+        if re.match(pluginEvents[i], text):  run.append(i(webhook, text))
+
+    return run
 
 def runServer(cfg, webhook, pluginEvents):
     # Open a pipe to the minecraft server
@@ -40,7 +43,10 @@ def runServer(cfg, webhook, pluginEvents):
             if text == '': continue
             common.debugPrint('Server', f'{text}', 'magenta')
             toWrite = parseServerOut(webhook, text, pluginEvents)
-            if toWrite != None: process.communicate(input = toWrite.encode())
+            if toWrite != []:
+                for i in toWrite:
+                    if i == None: continue
+                    process.communicate(input = i.encode())
         except Exception as e:
             common.debugPrint('Main', 'Uhhh... Houston, we have a problem.', 'red')
             print(common.colored(e, 'red'))
