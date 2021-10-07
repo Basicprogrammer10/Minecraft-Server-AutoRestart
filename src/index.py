@@ -16,8 +16,6 @@ version = 'Alpha 2.3'
 
 ######### FUNCTIONS #########
 def parseServerOut(webhook, text, pluginEvents):
-    #thisEvent = events.event(webhook, text)
-
     # Check for plugin Events
     for i in pluginEvents:
         if re.match(pluginEvents[i], text): return i(webhook, text)
@@ -64,7 +62,7 @@ def main():
     # Nice Welcome Message
     common.debugPrint('Main', f'Welcome to Minecraft Server AutoRestart! {version}', 'cyan')
 
-    # Plugin Loading
+    # Plugin Loading / Event Loading
     pluginEvents = {}
     plugins = common.getAllPlugins('src/plugins')
     plugins.append('events')
