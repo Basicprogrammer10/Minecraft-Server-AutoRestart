@@ -69,7 +69,7 @@ def main():
     # Nice Welcome Message
     common.debugPrint('Main', f'Welcome to Minecraft Server AutoRestart! {version}', 'cyan')
 
-    # Plugin Loading
+    # Plugin Loading / Event Loading
     pluginEvents = {}
     plugins = common.getAllPlugins('src/plugins')
     plugins.append('events')
@@ -98,6 +98,10 @@ def main():
 
 if __name__ == "__main__":
     try: main()
+<<<<<<< HEAD
     except:
         common.debugPrint('Main', 'Exiting...', 'red')
         print(traceback.print_exc())
+=======
+    except: common.debugPrint('Main', 'Exiting...', 'red')
+>>>>>>> 5de57cf78d436fd28815c86abf8809b03b05979f
