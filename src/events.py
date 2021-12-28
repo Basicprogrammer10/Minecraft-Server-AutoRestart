@@ -4,7 +4,7 @@ import common
 class event():
     def __init__(self, webhook):
         self.webhook = webhook
-    
+
     def serverStop(self):
         self.webhook.send(':stop_button: Server Stopped...')
 
@@ -29,7 +29,7 @@ class plugin():
 
     def advancement(self, webhook, rawData) -> '.* has (made|completed) the (advancement|challenge) \[.*\]':
         user = rawData.split(': ')[1].split(' ')[0]
-        adv = common.getLastOfArray(rawData.split('[')).split(']')[0]
+        adv = rawData.split('[')[-1].split(']')[0]
         thing = 'advancement' if 'advancement' in rawData else 'challenge'
         webhook.send(f':dvd: **{user}** has completed the {thing} **{adv}**')
 

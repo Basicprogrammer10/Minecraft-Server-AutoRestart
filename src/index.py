@@ -1,5 +1,6 @@
 # Import Modules
 from subprocess import Popen, PIPE, STDOUT, run
+import traceback
 import os
 import re
 
@@ -11,7 +12,7 @@ import events
 
 ########### CONFIG ###########
 configFile = 'config/config.confnose'
-version = 'Alpha 2.3'
+version = 'Alpha 2.4'
 
 
 ######### FUNCTIONS #########
@@ -26,7 +27,7 @@ def parseServerOut(webhook, text, pluginEvents):
 def runServer(cfg, webhook, pluginEvents):
     # Open a pipe to the minecraft server
     process = Popen(
-            cfg.get('toRun'), 
+            cfg.get('toRun'),
             stdout = PIPE,
             stdin = PIPE if cfg.get('autoStdIn') else None,
             stderr = STDOUT,
@@ -38,7 +39,7 @@ def runServer(cfg, webhook, pluginEvents):
         try:
             line = process.stdout.readline()
             text = line.decode("utf-8").replace('\n', '')
-            text = common.getLastOfArray(text.split('] '))
+            text = "] ".join(text.split('] ')[-1:])
             if not line: break
             if text == '': continue
             common.debugPrint('Server', f'{text}', 'magenta')
@@ -97,4 +98,6 @@ def main():
 
 if __name__ == "__main__":
     try: main()
-    except: common.debugPrint('Main', 'Exiting...', 'red')
+    except:
+        common.debugPrint('Main', 'Exiting...', 'red')
+        print(traceback.print_exc())
